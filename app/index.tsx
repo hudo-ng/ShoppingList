@@ -21,6 +21,7 @@ type ShoppingListItemType = {
 
 export default function App() {
   const [item, setItem] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([]);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function App() {
     if (item) {
       // Checking if add duplicated items
       const exit = shoppingList.some(
-        (aitem) => aitem.name.toLowerCase() === item.toLowerCase()
+        (aitem) => aitem.name.toLowerCase() === item.toLowerCase(),
       );
 
       if (!exit) {
@@ -101,14 +102,28 @@ export default function App() {
         </View>
       }
       ListHeaderComponent={
-        <TextInput
-          placeholder=".e.g Coffee"
-          style={styles.textInput}
-          value={item}
-          onChangeText={setItem}
-          onSubmitEditing={handleSubmit}
-          returnKeyType="done"
-        />
+        <>
+          {/* Item input */}
+          <TextInput
+            placeholder=".e.g Coffee"
+            style={styles.textInput}
+            value={item}
+            onChangeText={setItem}
+            onSubmitEditing={handleSubmit}
+            returnKeyType="done"
+          />
+          {/* Quantity input */}
+          {item && (
+            <TextInput
+              placeholder=".e.g 1kg"
+              style={[styles.quantityInput]}
+              value={quantity}
+              onChangeText={setQuantity}
+              onSubmitEditing={handleSubmit}
+              returnKeyType="done"
+            />
+          )}
+        </>
       }
     />
     // <ScrollView
@@ -171,11 +186,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 18,
     borderRadius: 50,
-    backgroundColor: "#fff",
+    fontWeight: "bold",
   },
   listEmptyContainer: {
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 18,
+  },
+  quantityInput: {
+    borderColor: theme.colorLightGrey,
+    borderWidth: 2,
+    padding: 12,
+    marginHorizontal: "auto",
+    marginBottom: 12,
+    fontSize: 15,
+    borderRadius: 50,
+    width: "50%",
   },
 });
