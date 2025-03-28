@@ -35,17 +35,26 @@ export default function App() {
 
   function handleSubmit() {
     if (item) {
-      const newShoppingList = [
-        {
-          id: new Date().toTimeString(),
-          name: item,
-          lastUpdatedTimestamp: Date.now(),
-        },
-        ...shoppingList,
-      ];
-      saveToStorage(storageKey, newShoppingList);
-      setShoppingList(newShoppingList);
-      setItem("");
+      // Checking if add duplicated items
+      const exit = shoppingList.some(
+        (aitem) => aitem.name.toLowerCase() === item.toLowerCase()
+      );
+
+      if (!exit) {
+        const newShoppingList = [
+          {
+            id: new Date().toTimeString(),
+            name: item,
+            lastUpdatedTimestamp: Date.now(),
+          },
+          ...shoppingList,
+        ];
+        saveToStorage(storageKey, newShoppingList);
+        setShoppingList(newShoppingList);
+        setItem("");
+      } else {
+        alert("Item is already added!");
+      }
     }
   }
 
