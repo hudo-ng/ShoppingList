@@ -6,9 +6,23 @@ import {
   Pressable,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { theme } from "../theme";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
+
+const getRandomColor = () => {
+  const colors = [
+    "#FF6B6B",
+    "#4ECDC4",
+    "#FFD166",
+    "#6B5CA5",
+    "#F86624",
+    "#05B2DC",
+    "#8EA604",
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
 
 type Props = {
   name: string;
@@ -53,7 +67,7 @@ export default function ShoppingListItem({
         <Entypo
           name={isCompleted ? "check" : "circle"}
           size={24}
-          color={isCompleted ? theme.colorGrey : theme.colorCerulean}
+          color={isCompleted ? theme.colorGreen : "#7DCEA0"}
         />
         <Text
           numberOfLines={1}
@@ -62,15 +76,12 @@ export default function ShoppingListItem({
             isCompleted ? styles.completedText : undefined,
           ]}
         >
-          {name} <Text style={styles.quantity}> {quantity}</Text>
+          {name}
+          <Text style={styles.quantity}> {quantity}</Text>
         </Text>
       </View>
       <TouchableOpacity onPress={handleDelete} activeOpacity={0.8}>
-        <AntDesign
-          name="closecircle"
-          size={24}
-          color={isCompleted ? theme.colorGrey : theme.colorRed}
-        />
+        <Ionicons name="trash-outline" size={22} color="#FF3B30" />
       </TouchableOpacity>
     </Pressable>
   );
@@ -79,12 +90,15 @@ export default function ShoppingListItem({
 const styles = StyleSheet.create({
   itemContainer: {
     borderBottomColor: theme.colorCerulean,
-    borderBottomWidth: 1,
+    // borderWidth: 1,
+    borderRadius: 15,
     paddingHorizontal: 8,
     paddingVertical: 18,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginHorizontal: 20,
+    backgroundColor: "#fff",
   },
   completedContainer: {
     backgroundColor: theme.colorLightGrey,
@@ -97,7 +111,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 18,
-    fontWeight: "200",
+    fontWeight: "500",
     flex: 1,
   },
   row: {
@@ -108,5 +122,8 @@ const styles = StyleSheet.create({
   quantity: {
     fontStyle: "italic",
     marginLeft: 10,
+    fontWeight: "normal",
+    color: "grey",
+    fontSize: 15,
   },
 });

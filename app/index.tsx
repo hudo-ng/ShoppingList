@@ -182,16 +182,19 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 24,
+    gap: 10,
+    backgroundColor: "#F2F2F7",
   },
   input: {
     display: "flex",
     flexDirection: "row",
+    backgroundColor: "#fff",
   },
   textInput: {
     borderColor: theme.colorLightGrey,
     borderWidth: 2,
     padding: 12,
-    marginHorizontal: 12,
+    marginLeft: 20,
     marginBottom: 12,
     fontSize: 18,
     borderRadius: 50,
@@ -211,6 +214,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 15,
     borderRadius: 50,
-    width: "30%",
+    width: "28%",
+    marginRight: 20,
   },
 });

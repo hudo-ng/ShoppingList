@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { theme } from "../theme";
 
 export default function Layout() {
@@ -11,7 +11,11 @@ export default function Layout() {
         options={{
           title: "Shopping list",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cart-heart" size={size} color={color} />
+            <MaterialCommunityIcons
+              name="cart-heart"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
@@ -21,7 +25,11 @@ export default function Layout() {
           title: "Notifications",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="bell-ring-outline" size={size} color={color}/>
+            <MaterialCommunityIcons
+              name="bell-ring-outline"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
