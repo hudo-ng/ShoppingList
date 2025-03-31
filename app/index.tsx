@@ -9,6 +9,7 @@ const storageKey = "shopping-List";
 type ShoppingListItemType = {
   id: string;
   name: string;
+  quantity?: string; //optional
   completedAtTimestamp?: number;
   lastUpdatedTimestamp: number;
 };
@@ -34,6 +35,7 @@ export default function App() {
     fetchInitial();
   }, []);
 
+  // handle submit item name + quantity (optional)
   function handleSubmit() {
     if (item) {
       // Checking if add duplicated items
@@ -46,6 +48,7 @@ export default function App() {
           {
             id: new Date().toTimeString(),
             name: item,
+            quantity: quantity,
             lastUpdatedTimestamp: Date.now(),
           },
           ...shoppingList,
@@ -53,6 +56,7 @@ export default function App() {
         saveToStorage(storageKey, newShoppingList);
         setShoppingList(newShoppingList);
         setItem("");
+        setQuantity("");
       } else {
         alert("Item is already added!");
       }
@@ -88,6 +92,7 @@ export default function App() {
       renderItem={({ item }) => (
         <ShoppingListItem
           name={item.name}
+          quantity={item.quantity}
           onDelete={() => handleDelete(item.id)}
           onToggleComplete={() => handleToggleComplete(item.id)}
           isCompleted={Boolean(item.completedAtTimestamp)}
@@ -102,7 +107,7 @@ export default function App() {
         </View>
       }
       ListHeaderComponent={
-        <>
+        <View style={styles.input}>
           {/* Item input */}
           <TextInput
             placeholder=".e.g Coffee"
@@ -112,7 +117,7 @@ export default function App() {
             onSubmitEditing={handleSubmit}
             returnKeyType="done"
           />
-          {/* Quantity input */}
+          {/* Quantity input if have item input*/}
           {item && (
             <TextInput
               placeholder=".e.g 1kg"
@@ -123,7 +128,7 @@ export default function App() {
               returnKeyType="done"
             />
           )}
-        </>
+        </View>
       }
     />
     // <ScrollView
@@ -178,6 +183,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 24,
   },
+  input: {
+    display: "flex",
+    flexDirection: "row",
+  },
   textInput: {
     borderColor: theme.colorLightGrey,
     borderWidth: 2,
@@ -187,6 +196,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     borderRadius: 50,
     fontWeight: "bold",
+    width: "60%",
   },
   listEmptyContainer: {
     justifyContent: "center",
@@ -201,6 +211,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 15,
     borderRadius: 50,
-    width: "50%",
+    width: "30%",
   },
 });

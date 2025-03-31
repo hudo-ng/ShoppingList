@@ -12,12 +12,14 @@ import Entypo from "@expo/vector-icons/Entypo";
 
 type Props = {
   name: string;
+  quantity: string;
   isCompleted?: boolean;
   onDelete: () => void;
   onToggleComplete: () => void;
 };
 export default function ShoppingListItem({
   name,
+  quantity,
   isCompleted,
   onDelete,
   onToggleComplete,
@@ -60,7 +62,7 @@ export default function ShoppingListItem({
             isCompleted ? styles.completedText : undefined,
           ]}
         >
-          {name}
+          {name} <Text style={styles.quantity}> {quantity}</Text>
         </Text>
       </View>
       <TouchableOpacity onPress={handleDelete} activeOpacity={0.8}>
@@ -102,5 +104,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     flex: 1,
+  },
+  quantity: {
+    fontStyle: "italic",
+    marginLeft: 10,
   },
 });
