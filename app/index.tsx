@@ -11,7 +11,7 @@ import { theme } from "../theme";
 import { useEffect, useState } from "react";
 import { getFromStorage, saveToStorage } from "../utils/storage";
 import * as Haptics from "expo-haptics";
-
+import * as Notifications from "expo-notifications"
 const storageKey = "shopping-List";
 
 type ShoppingListItemType = {
@@ -20,6 +20,14 @@ type ShoppingListItemType = {
   completedAtTimestamp?: number;
   lastUpdatedTimestamp: number;
 };
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function App() {
   const [item, setItem] = useState("");
