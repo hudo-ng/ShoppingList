@@ -21,12 +21,6 @@ type ShoppingListItemType = {
   lastUpdatedTimestamp: number;
 };
 
-// const initialList: ShoppingListItemType[] = [
-//   { id: "1", name: "Coffee" },
-//   { id: "2", name: "Tea" },
-//   { id: "3", name: "Sugar" },
-// ];
-
 export default function App() {
   const [item, setItem] = useState("");
   const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([]);
@@ -120,24 +114,6 @@ export default function App() {
         />
       }
     />
-    // <ScrollView
-    //   style={styles.container}
-    //   contentContainerStyle={styles.contentContainer}
-    //   stickyHeaderIndices={[0]}
-    // >
-    //   <TextInput
-    //     placeholder=".e.g Coffee"
-    //     style={styles.textInput}
-    //     value={item}
-    //     onChangeText={setItem}
-    //     onSubmitEditing={handleSubmit}
-    //     returnKeyType="done"
-    //   />
-    //   {shoppingList.map((i) => (
-    //     <ShoppingListItem name={i.name} key={i.id} />
-    //   ))}
-    //   <StatusBar style="auto" />
-    // </ScrollView>
   );
 }
 
