@@ -11,7 +11,7 @@ import { theme } from "../theme";
 import { useEffect, useState } from "react";
 import { getFromStorage, saveToStorage } from "../utils/storage";
 import * as Haptics from "expo-haptics";
-import * as Notifications from "expo-notifications"
+import * as Notifications from "expo-notifications";
 const storageKey = "shopping-List";
 
 type ShoppingListItemType = {
