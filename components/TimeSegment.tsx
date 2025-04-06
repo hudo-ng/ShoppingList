@@ -1,9 +1,9 @@
 import { Text, View, StyleSheet, TextStyle } from "react-native";
 
 type Props = {
-  number: string;
+  number: number;
   unit: string;
-  textStyle: TextStyle;
+  textStyle?: TextStyle;
 };
 
 export default function TimeSegment({ number, unit, textStyle }: Props) {
