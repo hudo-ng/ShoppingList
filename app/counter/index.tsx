@@ -1,31 +1,63 @@
-import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import * as Notifications from "expo-notifications";
 import { theme } from "../../theme";
 import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
 import { useEffect, useState } from "react";
 import { Duration, intervalToDuration, isBefore } from "date-fns";
 import TimeSegment from "../../components/TimeSegment";
+import { getFromStorage, saveToStorage } from "../../utils/storage";
+
+type PersistedCountdownState = {
+  currentNotificationId: string | undefined;
+  completedAtTimestamps: number[];
+};
 
 type CountdownStatus = {
   isOverdue: boolean;
   distance: Duration;
 };
 
-const timeStamp = Date.now() + 1000 * 30;
+const frequency = 1000 * 20;
+const countdownStorageKey = "task-countdown";
 
 export default function CounterScreen() {
+  const [loading, setLoading] = useState(true);
+  const [countdownState, setCountdownState] =
+    useState<PersistedCountdownState>();
   const [status, setStatus] = useState<CountdownStatus>({
     isOverdue: false,
     distance: {},
   });
 
+  const lastCompletedTimestamp = countdownState?.completedAtTimestamps[0];
+
+  useEffect(() => {
+    const init = async () => {
+      const value = await getFromStorage(countdownStorageKey);
+      setCountdownState(value);
+    };
+    init();
+  }, []);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const isOverdue = isBefore(timeStamp, Date.now());
+      const timestamp = lastCompletedTimestamp
+        ? lastCompletedTimestamp + frequency
+        : Date.now();
+
+      lastCompletedTimestamp && setLoading(false);
+      const isOverdue = isBefore(timestamp, Date.now());
       const distance = intervalToDuration(
         isOverdue
-          ? { start: timeStamp, end: Date.now() }
-          : { start: Date.now(), end: timeStamp },
+          ? { start: timestamp, end: Date.now() }
+          : { start: Date.now(), end: timestamp },
       );
       setStatus({ isOverdue, distance });
     }, 1000);
@@ -33,17 +65,18 @@ export default function CounterScreen() {
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  }, [lastCompletedTimestamp]);
 
   const scheduleNotification = async () => {
+    let notificationId;
     const result = await registerForPushNotificationsAsync();
     if (result === "granted") {
-      await Notifications.scheduleNotificationAsync({
+      notificationId = await Notifications.scheduleNotificationAsync({
         content: {
-          title: "I am a notification from your app 🕷️",
+          title: "The task is due! 🕷️",
         },
         trigger: {
-          seconds: 7,
+          seconds: frequency / 1000,
         },
       });
     } else {
@@ -52,7 +85,31 @@ export default function CounterScreen() {
         "Enable notification permission for Expo Go in settings",
       );
     }
+
+    if (countdownState?.currentNotificationId) {
+      await Notifications.cancelScheduledNotificationAsync(
+        countdownState?.currentNotificationId,
+      );
+    }
+
+    const newCountdownState: PersistedCountdownState = {
+      currentNotificationId: notificationId,
+      completedAtTimestamps: countdownState
+        ? [Date.now(), ...countdownState.completedAtTimestamps]
+        : [Date.now()],
+    };
+    setCountdownState(newCountdownState);
+    await saveToStorage(countdownStorageKey, newCountdownState);
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   return (
     <View
       style={[styles.container, status.isOverdue ? styles.late : undefined]}
@@ -103,7 +160,7 @@ export default function CounterScreen() {
         activeOpacity={0.8}
         onPress={scheduleNotification}
       >
-        <Text style={styles.buttonText}>Schedule a notification</Text>
+        <Text style={styles.buttonText}>Done it!</Text>
       </TouchableOpacity>
     </View>
   );
@@ -146,5 +203,12 @@ const styles = StyleSheet.create({
 
   whiteText: {
     color: "white",
+  },
+
+  loading: {
+    flex: 1,
+    backgroundColor: theme.colorWhite,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
