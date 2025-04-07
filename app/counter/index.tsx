@@ -6,20 +6,25 @@ import {
   Alert,
   ActivityIndicator,
   useWindowDimensions,
+  TextInput,
+  Platform,
 } from "react-native";
 import * as Notifications from "expo-notifications";
 import * as Haptics from "expo-haptics";
-import { theme } from "../../theme";
-import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
-import { useEffect, useState, useRef } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useEffect, useRef, useState } from "react";
 import { Duration, intervalToDuration, isBefore } from "date-fns";
+
+import { theme } from "../../theme";
 import TimeSegment from "../../components/TimeSegment";
-import { getFromStorage, saveToStorage } from "../../utils/storage";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { getFromStorage, saveToStorage } from "../../utils/storage";
+import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
 
 export type PersistedCountdownState = {
   currentNotificationId: string | undefined;
   completedAtTimestamps: number[];
+  taskName?: string;
 };
 
 type CountdownStatus = {
@@ -27,14 +32,18 @@ type CountdownStatus = {
   distance: Duration;
 };
 
-// 7 days
-const frequency = 1000 * 3600 * 24 * 7;
+const frequency = 1000 * 60 * 60 * 24;
 export const countdownStorageKey = "task-countdown";
 
 export default function CounterScreen() {
   const confettiRef = useRef<any>();
   const { width } = useWindowDimensions();
+
   const [loading, setLoading] = useState(true);
+  const [task, setTask] = useState("");
+  const [reminderTime, setReminderTime] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   const [countdownState, setCountdownState] =
     useState<PersistedCountdownState>();
   const [status, setStatus] = useState<CountdownStatus>({
@@ -45,6 +54,14 @@ export default function CounterScreen() {
   const lastCompletedTimestamp = countdownState?.completedAtTimestamps[0];
 
   useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
+
     const init = async () => {
       const value = await getFromStorage(countdownStorageKey);
       setCountdownState(value);
@@ -54,34 +71,35 @@ export default function CounterScreen() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const timestamp = lastCompletedTimestamp
+      const nextTimestamp = lastCompletedTimestamp
         ? lastCompletedTimestamp + frequency
         : Date.now();
 
       lastCompletedTimestamp && setLoading(false);
-      const isOverdue = isBefore(timestamp, Date.now());
+      const isOverdue = isBefore(nextTimestamp, Date.now());
       const distance = intervalToDuration(
         isOverdue
-          ? { start: timestamp, end: Date.now() }
-          : { start: Date.now(), end: timestamp },
+          ? { start: nextTimestamp, end: Date.now() }
+          : { start: Date.now(), end: nextTimestamp },
       );
       setStatus({ isOverdue, distance });
     }, 1000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
+    return () => clearInterval(intervalId);
   }, [lastCompletedTimestamp]);
 
-  const scheduleNotification = async () => {
+  const handleCompletion = async () => {
     confettiRef?.current?.start();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    let notificationId;
+
+    let notificationId: string | undefined;
     const result = await registerForPushNotificationsAsync();
+
     if (result === "granted") {
       notificationId = await Notifications.scheduleNotificationAsync({
         content: {
-          title: "great job! 🕷️",
+          title: "Great job! 🕷️",
+          body: "Your reminder is up!",
         },
         trigger: {
           seconds: frequency / 1000,
@@ -96,18 +114,56 @@ export default function CounterScreen() {
 
     if (countdownState?.currentNotificationId) {
       await Notifications.cancelScheduledNotificationAsync(
-        countdownState?.currentNotificationId,
+        countdownState.currentNotificationId,
       );
     }
 
-    const newCountdownState: PersistedCountdownState = {
+    const newState: PersistedCountdownState = {
       currentNotificationId: notificationId,
-      completedAtTimestamps: countdownState
-        ? [Date.now(), ...countdownState.completedAtTimestamps]
-        : [Date.now()],
+      completedAtTimestamps: [
+        Date.now(),
+        ...(countdownState?.completedAtTimestamps ?? []),
+      ],
+      taskName: task || countdownState?.taskName,
     };
-    setCountdownState(newCountdownState);
-    await saveToStorage(countdownStorageKey, newCountdownState);
+
+    setCountdownState(newState);
+    await saveToStorage(countdownStorageKey, newState);
+    setTask("");
+  };
+
+  const handleSetReminder = async () => {
+    if (!task.trim()) {
+      Alert.alert("Task missing", "Please enter a task first.");
+      return;
+    }
+
+    const permission = await registerForPushNotificationsAsync();
+    if (permission !== "granted") {
+      Alert.alert("Permission denied", "Please allow notifications.");
+      return;
+    }
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "⏰ Reminder",
+        body: task,
+        sound: "default",
+      },
+      trigger: reminderTime,
+    });
+
+    Alert.alert("Reminder Set", `You’ll be reminded to: ${task}`);
+
+    const updatedCountdownState: PersistedCountdownState = {
+      ...countdownState,
+      taskName: task, // ✅ overwrite old task name with current input
+    };
+
+    setCountdownState(updatedCountdownState);
+    await saveToStorage(countdownStorageKey, updatedCountdownState);
+
+    setTask("");
   };
 
   if (loading) {
@@ -119,28 +175,15 @@ export default function CounterScreen() {
   }
 
   return (
-    <View
-      style={[styles.container, status.isOverdue ? styles.late : undefined]}
-    >
-      {status.isOverdue ? (
-        <Text
-          style={[
-            styles.heading,
-            status.isOverdue ? styles.whiteText : undefined,
-          ]}
-        >
-          Car wash overdue by
-        </Text>
-      ) : (
-        <Text
-          style={[
-            styles.heading,
-            status.isOverdue ? styles.whiteText : undefined,
-          ]}
-        >
-          Car wash due in...
-        </Text>
-      )}
+    <View style={[styles.container, status.isOverdue && styles.late]}>
+      <Text style={[styles.heading, status.isOverdue && styles.whiteText]}>
+        {countdownState?.taskName
+          ? `${countdownState.taskName} ${status.isOverdue ? "overdue by" : "due in..."}`
+          : status.isOverdue
+            ? "Task overdue by"
+            : "Task due in..."}
+      </Text>
+
       <View style={styles.row}>
         <TimeSegment
           number={status.distance.days ?? 0}
@@ -163,13 +206,62 @@ export default function CounterScreen() {
           textStyle={status.isOverdue ? styles.whiteText : undefined}
         />
       </View>
+
+      <View style={styles.reminderBox}>
+        <Text
+          style={[
+            styles.label,
+            status.isOverdue ? styles.whiteText : undefined,
+          ]}
+        >
+          Thing to do:
+        </Text>
+        <TextInput
+          placeholder="Enter a task..."
+          value={task}
+          onChangeText={setTask}
+          style={[
+            styles.input,
+            status.isOverdue ? styles.whiteText : undefined,
+          ]}
+        />
+        <TouchableOpacity
+          onPress={() => setShowDatePicker(true)}
+          style={styles.datePickerButton}
+        >
+          <Text style={styles.datePickerText}>
+            Pick time: {reminderTime.toLocaleString()}
+          </Text>
+        </TouchableOpacity>
+        {showDatePicker && (
+          <DateTimePicker
+            value={reminderTime}
+            mode="datetime"
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={(event, selectedDate) => {
+              const currentDate = selectedDate || reminderTime;
+              setShowDatePicker(false);
+              setReminderTime(currentDate);
+            }}
+          />
+        )}
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.8}
+          onPress={handleSetReminder}
+        >
+          <Text style={styles.buttonText}>Set Reminder</Text>
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity
         style={styles.button}
         activeOpacity={0.8}
-        onPress={scheduleNotification}
+        onPress={handleCompletion}
       >
         <Text style={styles.buttonText}>Done it!</Text>
       </TouchableOpacity>
+
       <ConfettiCannon
         ref={confettiRef}
         count={50}
@@ -187,43 +279,66 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
+    padding: 20,
   },
-
-  button: {
-    backgroundColor: theme.colorBlack,
-    padding: 12,
-    borderRadius: 6,
-  },
-
-  buttonText: {
-    color: theme.colorWhite,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
-
-  row: {
-    flexDirection: "row",
-  },
-
   heading: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 24,
   },
-
+  row: {
+    flexDirection: "row",
+    marginBottom: 30,
+  },
   late: {
     backgroundColor: "red",
   },
-
   whiteText: {
     color: "white",
   },
-
+  button: {
+    backgroundColor: theme.colorBlack,
+    padding: 12,
+    borderRadius: 6,
+    marginTop: 12,
+    width: "100%",
+  },
+  buttonText: {
+    color: theme.colorWhite,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    textAlign: "center",
+    letterSpacing: 1,
+  },
   loading: {
     flex: 1,
     backgroundColor: theme.colorWhite,
     justifyContent: "center",
     alignItems: "center",
+  },
+  reminderBox: {
+    width: "100%",
+    marginBottom: 20,
+  },
+  label: {
+    marginBottom: 8,
+    fontWeight: "bold",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+    padding: 10,
+    marginBottom: 24,
+  },
+  datePickerButton: {
+    backgroundColor: "#333",
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 10,
+  },
+  datePickerText: {
+    color: "#fff",
+    textAlign: "center",
   },
 });
