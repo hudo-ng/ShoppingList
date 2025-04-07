@@ -166,13 +166,13 @@ export default function CounterScreen() {
     setTask("");
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.loading}>
+  //       <ActivityIndicator />
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={[styles.container, status.isOverdue && styles.late]}>
