@@ -118,16 +118,15 @@ export default function App() {
             returnKeyType="done"
           />
           {/* Quantity input if have item input*/}
-          {item && (
-            <TextInput
-              placeholder=".e.g 1kg"
-              style={[styles.quantityInput]}
-              value={quantity}
-              onChangeText={setQuantity}
-              onSubmitEditing={handleSubmit}
-              returnKeyType="done"
-            />
-          )}
+
+          <TextInput
+            placeholder=".e.g 1kg"
+            style={[styles.quantityInput]}
+            value={quantity}
+            onChangeText={setQuantity}
+            onSubmitEditing={handleSubmit}
+            returnKeyType="done"
+          />
         </View>
       }
     />
@@ -177,7 +176,7 @@ function orderShoppingList(shoppingList: ShoppingListItemType[]) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f8f8f8",
     paddingTop: 12,
   },
   contentContainer: {
@@ -188,7 +187,8 @@ const styles = StyleSheet.create({
   input: {
     display: "flex",
     flexDirection: "row",
-    backgroundColor: "#fff",
+    marginTop: 5,
+    // backgroundColor: "#fff",
   },
   textInput: {
     borderColor: theme.colorLightGrey,
@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     fontWeight: "bold",
     width: "60%",
+    backgroundColor: "#fff",
   },
   listEmptyContainer: {
     justifyContent: "center",
@@ -216,5 +217,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     width: "28%",
     marginRight: 20,
+    backgroundColor: "#fff",
   },
 });
