@@ -1,9 +1,17 @@
-import { StyleSheet, TextInput, FlatList, View, Text } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  FlatList,
+  View,
+  Text,
+  LayoutAnimation,
+} from "react-native";
 import ShoppingListItem from "../components/ShoppingListItem";
 import { theme } from "../theme";
 import { useEffect, useState } from "react";
 import { getFromStorage, saveToStorage } from "../utils/storage";
-
+import * as Haptics from "expo-haptics";
+import * as Notifications from "expo-notifications";
 const storageKey = "shopping-List";
 
 type ShoppingListItemType = {
@@ -14,11 +22,13 @@ type ShoppingListItemType = {
   lastUpdatedTimestamp: number;
 };
 
-// const initialList: ShoppingListItemType[] = [
-//   { id: "1", name: "Coffee" },
-//   { id: "2", name: "Tea" },
-//   { id: "3", name: "Sugar" },
-// ];
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function App() {
   const [item, setItem] = useState("");
@@ -29,6 +39,7 @@ export default function App() {
     const fetchInitial = async () => {
       const data = await getFromStorage(storageKey);
       if (data) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setShoppingList(data);
       }
     };
@@ -60,18 +71,26 @@ export default function App() {
       } else {
         alert("Item is already added!");
       }
+
     }
   }
 
   function handleDelete(id: string) {
     const newShoppingList = shoppingList.filter((item) => item.id !== id);
     saveToStorage(storageKey, newShoppingList);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setShoppingList(newShoppingList);
   }
 
   function handleToggleComplete(id: string) {
     const newShoppingList = shoppingList.map((item) => {
       if (item.id === id) {
+        if (item.completedAtTimestamp) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        } else {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
         return {
           ...item,
           completedAtTimestamp: item.completedAtTimestamp
@@ -83,6 +102,7 @@ export default function App() {
       return item;
     });
     saveToStorage(storageKey, newShoppingList);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShoppingList(newShoppingList);
   }
 
@@ -130,24 +150,6 @@ export default function App() {
         </View>
       }
     />
-    // <ScrollView
-    //   style={styles.container}
-    //   contentContainerStyle={styles.contentContainer}
-    //   stickyHeaderIndices={[0]}
-    // >
-    //   <TextInput
-    //     placeholder=".e.g Coffee"
-    //     style={styles.textInput}
-    //     value={item}
-    //     onChangeText={setItem}
-    //     onSubmitEditing={handleSubmit}
-    //     returnKeyType="done"
-    //   />
-    //   {shoppingList.map((i) => (
-    //     <ShoppingListItem name={i.name} key={i.id} />
-    //   ))}
-    //   <StatusBar style="auto" />
-    // </ScrollView>
   );
 }
 
