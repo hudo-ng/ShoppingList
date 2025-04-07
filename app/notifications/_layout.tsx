@@ -9,7 +9,7 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Counter",
+          title: "Notifications",
           headerRight: () => (
             <View>
               <Link href="/counter/history" asChild>
