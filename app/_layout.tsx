@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
-import Feather from "@expo/vector-icons/Feather";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { theme } from "../theme";
 
 export default function Layout() {
@@ -12,26 +11,34 @@ export default function Layout() {
         options={{
           title: "Shopping list",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="list" size={size} color={color} />
+            <MaterialCommunityIcons
+              name="cart-heart"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="counter"
+        name="notifications"
         options={{
-          title: "Counter",
+          title: "Notifications",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <AntDesign name="clockcircleo" size={size} color={color} />
+            <MaterialCommunityIcons
+              name="bell-ring-outline"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="idea"
+        name="profile"
         options={{
-          title: "Idea",
+          title: "Profile",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome5 name="lightbulb" size={size} color={color} />
+            <Ionicons name="person" size={size} color={color} />
           ),
         }}
       />
