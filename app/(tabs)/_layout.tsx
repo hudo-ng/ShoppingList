@@ -8,7 +8,7 @@ import AuthShell from '../../components/AuthShell';
 export default function Layout() {
   return (
     <AuthProvider> <AuthShell>
-    <Tabs screenOptions={{ tabBarActiveTintColor: theme.colorCerulean }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: theme.colorCerulean ,headerShown:false,  tabBarStyle:{height:60, backgroundColor: '#ddd', },}}>
       <Tabs.Screen
         name="index"
         options={{
