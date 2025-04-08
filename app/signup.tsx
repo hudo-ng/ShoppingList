@@ -163,9 +163,7 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: "#fff",
+    backgroundColor: "#90EE90",
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
   },
   form: {
     width: "100%",
-    // backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 20,
   },
@@ -210,14 +208,12 @@ const styles = StyleSheet.create({
     color: "#33691E",
   },
   input: {
-    width: 280,
-    height: 40,
     borderWidth: 1,
-    borderColor: "#000",
-    padding: 12,
-    marginVertical: 10,
+    borderColor: "#E0E0E0",
     borderRadius: 8,
-    backgroundColor: "#fff",
+    padding: 15,
+    fontSize: 16,
+    backgroundColor: "#F5F5F5",
   },
   inputError: {
     borderColor: "#ff3b30",
@@ -240,17 +236,15 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#006400",
-    paddingVertical: 12,
-    paddingHorizontal: 20,      
     borderRadius: 8,
-    marginVertical: 10,
-    width: 280,
+    padding: 16,
     alignItems: "center",
+    marginTop: 10,
   },
-  buttonText: { 
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
   },
   loginContainer: {
     flexDirection: "row",
@@ -262,10 +256,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginLink: {
-   //  color: "#4CAF50",
+    color: "#4CAF50",
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 5,
   },
-  error: { color: 'red', marginBottom: 10 },
+  error: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
+    textAlign: 'center',
+  },
 })
