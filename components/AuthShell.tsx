@@ -68,8 +68,13 @@ export default function AuthShell({ children }: Props) {
   };
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
+  
 
   return (
     <>
@@ -77,3 +82,4 @@ export default function AuthShell({ children }: Props) {
     </>
   );
 }
+
