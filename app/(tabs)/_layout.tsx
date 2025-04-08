@@ -1,10 +1,13 @@
 import { Tabs } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { theme } from "../theme";
+import { theme } from "../../theme";
+import { AuthProvider } from '../../components/AuthContext';
+import AuthShell from '../../components/AuthShell';
 
 export default function Layout() {
   return (
+    <AuthProvider> <AuthShell>
     <Tabs screenOptions={{ tabBarActiveTintColor: theme.colorCerulean }}>
       <Tabs.Screen
         name="index"
@@ -43,5 +46,6 @@ export default function Layout() {
         }}
       />
     </Tabs>
+    </AuthShell></AuthProvider>
   );
 }
