@@ -163,7 +163,7 @@ export default function SignupScreen({ navigation }: { navigation: any }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#90EE90",
+    backgroundColor: "white",
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -191,12 +191,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#2E7D32",
     textAlign: "center",
-  },
-  form: {
-    width: "100%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 20,
   },
   inputContainer: {
     marginBottom: 20,
