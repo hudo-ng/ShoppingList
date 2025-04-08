@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Text, View, StyleSheet, FlatList } from "react-native";
-import { getFromStorage } from "../../utils/storage";
-import { countdownStorageKey } from ".";
-import { PersistedCountdownState } from ".";
+import { getFromStorage } from "../../../utils/storage";
+import { countdownStorageKey } from "./index";
+import { PersistedCountdownState } from "./index";
 import { format } from "date-fns";
-import { theme } from "../../theme";
+import { theme } from "../../../theme";
 
 const fullDateFormat = `LLL d yyyy, h:mm aaa`;
 export default function HistoryScreen() {

@@ -1,6 +1,6 @@
 import { Link, Stack } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { theme } from "../../theme";
+import { theme } from "../../../theme";
 import { Pressable, View } from "react-native";
 
 export default function Layout() {
@@ -9,10 +9,10 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Notifications",
+          title: "",
           headerRight: () => (
             <View>
-              <Link href="/counter/history" asChild>
+              <Link href="/notifications/history" asChild>
                 <Pressable hitSlop={20}>
                   <MaterialIcons
                     name="history"

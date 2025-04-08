@@ -6,10 +6,10 @@ import {
   Text,
   LayoutAnimation,
 } from "react-native";
-import ShoppingListItem from "../components/ShoppingListItem";
-import { theme } from "../theme";
+import ShoppingListItem from "../../components/ShoppingListItem";
+import { theme } from "../../theme";
 import { useEffect, useState } from "react";
-import { getFromStorage, saveToStorage } from "../utils/storage";
+import { getFromStorage, saveToStorage } from "../../utils/storage";
 import * as Haptics from "expo-haptics";
 import * as Notifications from "expo-notifications";
 const storageKey = "shopping-List";

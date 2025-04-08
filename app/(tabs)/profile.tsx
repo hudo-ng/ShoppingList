@@ -1,28 +1,39 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useRouter} from 'expo-router';
 import { Ionicons } from "@expo/vector-icons"
+import { AuthContext } from '../../components/AuthContext';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Profile() {
   const router = useRouter(); // Get the
+
+  const { token, setToken } = useContext(AuthContext);
+
+  const handleSignOut = async () => {
+    await SecureStore.deleteItemAsync('token');
+    setToken('');
+    router.replace('/');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-  
+
         <Text style={styles.title}> </Text>
       </View>
 
       <Image style={styles.profile} source={{uri: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=600"}} />
-      
-      <Text>Username: John Doe</Text> 
-{/*
+
+      <Text>Username: John Doe</Text>
+      {/*
     <TouchableOpacity style={styles.button} onPress={() => router.push('/lists')}>
             <Text>Back to Shopping List</Text>
     </TouchableOpacity>
 */}
-    <TouchableOpacity style={styles.buttonRed} onPress={() => router.push('/')}>
-            <Text>Logout</Text>  
-    </TouchableOpacity>
+      <TouchableOpacity style={styles.buttonRed} onPress={handleSignOut}>
+        <Text>Logout</Text>
+      </TouchableOpacity>
     </View>
 
   );
