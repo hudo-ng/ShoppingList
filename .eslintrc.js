@@ -6,4 +6,10 @@ module.exports = {
     "prettier/prettier": "error",
     "react-native/no-unused-styles": "error",
   },
+  "prettier/prettier": [
+    "error",
+    {
+      "endOfLine": "auto"
+    },
+  ],
 };
