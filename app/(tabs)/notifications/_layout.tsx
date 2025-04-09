@@ -12,7 +12,7 @@ export default function Layout() {
           title: "Notifications",
           headerRight: () => (
             <View>
-              <Link href="/counter/history" asChild>
+              <Link href="/notifications/history" asChild>
                 <Pressable hitSlop={20}>
                   <MaterialIcons
                     name="history"
