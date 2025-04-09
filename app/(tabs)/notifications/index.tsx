@@ -4,7 +4,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
   useWindowDimensions,
   TextInput,
   Platform,
@@ -15,11 +14,11 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useEffect, useRef, useState } from "react";
 import { Duration, intervalToDuration, isBefore } from "date-fns";
 
-import { theme } from "../../theme";
-import TimeSegment from "../../components/TimeSegment";
+import { theme } from "../../../theme";
+import TimeSegment from "../../../components/TimeSegment";
 import ConfettiCannon from "react-native-confetti-cannon";
-import { getFromStorage, saveToStorage } from "../../utils/storage";
-import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
+import { getFromStorage, saveToStorage } from "../../../utils/storage";
+import { registerForPushNotificationsAsync } from "../../../utils/registerForPushNotificationsAsync";
 
 export type PersistedCountdownState = {
   currentNotificationId: string | undefined;
@@ -309,12 +308,6 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     textAlign: "center",
     letterSpacing: 1,
-  },
-  loading: {
-    flex: 1,
-    backgroundColor: theme.colorWhite,
-    justifyContent: "center",
-    alignItems: "center",
   },
   reminderBox: {
     width: "100%",

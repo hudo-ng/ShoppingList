@@ -1,6 +1,6 @@
 import { Link, Stack } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { theme } from "../../theme";
+import { theme } from "../../../theme";
 import { Pressable, View } from "react-native";
 
 export default function Layout() {
