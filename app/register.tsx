@@ -64,7 +64,8 @@ export default function Register() {
           }
           setSubmitting(false);
           resetForm();
-          router.replace("/index");
+          Alert.alert("Registration successful!");
+          router.replace("/");
         } catch (error) {
           console.log(error);
           Alert.alert("Registration network error");
